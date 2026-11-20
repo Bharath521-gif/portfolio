@@ -116,13 +116,13 @@ CSS = """
   --body:'DM Sans','Segoe UI',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--body);background:var(--cream);color:var(--green);line-height:1.65;font-size:1.05rem}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{width:100%;overflow-x:hidden;font-family:var(--body);background:var(--cream);color:var(--green);line-height:1.65;font-size:1.05rem}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--bordo);outline-offset:3px}
 .on-dark :focus-visible{outline-color:var(--cream)}
 h1,h2,h3{font-family:var(--display);font-weight:700;line-height:.95;letter-spacing:.005em}
-.wrap{max-width:1120px;margin:0 auto;padding:0 1.5rem}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 1.5rem;min-width:0}
 section{padding:6rem 0}
 h2{font-size:clamp(2.6rem,6vw,4.4rem);margin-bottom:2.5rem}
 
@@ -172,13 +172,15 @@ nav ul a:hover{color:var(--bordo);text-decoration:underline;text-underline-offse
 
 /* experience timeline */
 .timeline{list-style:none;border-left:3px solid var(--bordo);margin-left:.5rem}
-.timeline li{position:relative;padding:0 0 2.6rem 2rem}
-.timeline li:last-child{padding-bottom:0}
-.timeline li::before{content:"";position:absolute;left:-11px;top:.55rem;width:19px;height:19px;border-radius:50%;background:var(--cream);border:4px solid var(--bordo)}
+.timeline > li{position:relative;padding:0 0 2.6rem 2rem;min-width:0}
+.timeline > li:last-child{padding-bottom:0}
+.timeline > li::before{content:"";position:absolute;left:-11px;top:.55rem;width:19px;height:19px;border-radius:50%;background:var(--cream);border:4px solid var(--bordo)}
 .when{font-weight:700;color:var(--bordo)}
 .timeline h3{font-size:2rem;margin:.2rem 0}
 .org{font-weight:500;margin-bottom:.6rem}
-.timeline ul{padding-left:1.1rem;max-width:42rem}
+.timeline > li > ul{padding-left:1.1rem;max-width:42rem;list-style:circle}
+.timeline > li > ul > li{position:static;padding:0;margin:.25rem 0;overflow-wrap:anywhere}
+.timeline > li > ul > li::before{content:none}
 
 /* projects */
 .projects{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
@@ -209,7 +211,18 @@ footer{background:var(--green);color:var(--cream);padding:1.5rem 0;border-top:1p
   nav ul{gap:1rem;font-size:.95rem}
   section{padding:4rem 0}
 }
-@media (max-width:560px){nav ul li:nth-child(n+4){display:none}}
+@media (max-width:560px){
+  nav .wrap{align-items:flex-start;gap:.6rem;flex-direction:column}
+  nav ul{flex-wrap:wrap;gap:.45rem .9rem}
+  .wrap{padding-left:1rem;padding-right:1rem}
+  section{padding:3rem 0}
+  h2{font-size:clamp(2rem,9vw,3rem);line-height:1.08;overflow-wrap:anywhere;margin-bottom:1.6rem}
+  .timeline{margin-left:.45rem}
+  .timeline > li{padding-left:1.35rem;padding-bottom:2rem}
+  .timeline h3{font-size:clamp(1.35rem,6vw,1.8rem);line-height:1.15;overflow-wrap:anywhere}
+  .org,.when,.timeline p{overflow-wrap:anywhere}
+  .contact .big{font-size:clamp(1.35rem,6vw,2.2rem);overflow-wrap:anywhere}
+}
 @media (prefers-reduced-motion:reduce){.slab{animation:none}.btn{transition:none}html{scroll-behavior:auto}}
 """
 
@@ -409,6 +422,7 @@ if __name__ == "__main__":
     )
 
     resume_bytes = get_resume_bytes()
+    st.markdown("<div id='resume-download'></div>", unsafe_allow_html=True)
     if resume_bytes:
         st.download_button(
             label="Download resume PDF",
@@ -418,9 +432,10 @@ if __name__ == "__main__":
             key="resume_download",
         )
     else:
-        st.caption(
-            "To enable the resume download, add resume.pdf to the same GitHub "
-            "folder as app.py (or include your existing resume_data.py)."
+        st.warning(
+            "Resume PDF is not included yet. Upload your resume as **resume.pdf** "
+            "to the same GitHub folder as app.py, then redeploy. The download "
+            "button will appear automatically."
         )
 
     portfolio_html = render_portfolio()
