@@ -382,7 +382,7 @@ def render_portfolio():
 def get_resume_bytes():
     """Load the existing resume PDF, if the project contains one."""
     # Preferred: an existing resume.pdf beside this app.py.
-    pdf_path = Path(__file__).with_name("resume.pdf")
+    pdf_path = Path(__file__).with_name("Resume.pdf")
     if pdf_path.exists():
         return pdf_path.read_bytes()
 
